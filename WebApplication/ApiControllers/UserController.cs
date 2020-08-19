@@ -11,7 +11,7 @@ namespace WebApplication.ApiControllers
 {
     [Authorize]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/user")]
     public class UserController : ControllerBase
     {
 
