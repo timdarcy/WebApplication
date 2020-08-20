@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WebApplication
+namespace WebApplication.Models.DataModels
 {
-    public class UserModel
+    public class User
     {
         public int Id { get; set; }
         public string FirstName { get; set; }
@@ -15,11 +15,11 @@ namespace WebApplication
         public byte[] PasswordHash { get; set; }
         public byte[] PasswordSalt { get; set; }
 
-        public UserDataModel UserData { get; set; }
+        public UserData UserData { get; set; }
     }
 
     [Owned]
-    public class UserDataModel
+    public class UserData
     {
         public List<string> Cards { get; set; }
     }
