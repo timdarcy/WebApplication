@@ -8,24 +8,33 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using WebApplication.Data;
 using Microsoft.EntityFrameworkCore;
+using WebApplication.Helpers;
+using WebApplication.Interfaces;
+using WebApplication.Services;
 
 namespace WebApplication
 {
     public class Startup
     {
+        private readonly IConfiguration _configuration;
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            _configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
 
-            services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IAppSettings, AppSettings>();
+
+            services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(_configuration.GetConnectionString("DefaultConnection")));
+
+            var appSettingsSection = _configuration.GetSection("AppSettings");
+            services.Configure<AppSettings>(appSettingsSection);
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

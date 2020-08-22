@@ -63,7 +63,7 @@ class Authentication extends React.Component<Props,State>{
 
                     <label htmlFor="password">Password</label>
                     <Field id="password" name="password" type="password" />
-                    <Button color="link" onClick={this.handleChangeToSignup}>Login</Button>
+                    <Button color="link" onClick={this.handleChangeToSignup}>Sign Up</Button>
                     <Button color="primary" type="submit">Submit</Button>
                 </Form>
 

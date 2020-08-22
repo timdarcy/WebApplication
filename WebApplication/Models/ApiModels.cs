@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 
 namespace WebApplication.Models.ApiModels
 {
@@ -28,4 +30,32 @@ namespace WebApplication.Models.ApiModels
     public class Update
     {
     }
+
+    public class ServiceResponse<T>
+    {
+        public T Data { get; set; }
+        public List<Error> Errors {get;set;}
+        public bool HasError => Errors.Any();
+
+    }
+
+    public class ErrorResponse : ServiceResponse<string>
+    {
+        public ErrorResponse(List<Error> errors)
+        {
+            Errors = errors;
+        }
+    }
+
+    public class Error
+    {
+        public Error(string message)
+        {
+            Message = message;
+        }
+
+        public string Message { get; set; }
+    }
+
+
 }
