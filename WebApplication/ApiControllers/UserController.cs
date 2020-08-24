@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using WebApplication.Helpers;
 using System.Text;
 using WebApplication.Models.DataModels;
+using Microsoft.Extensions.Options;
 
 namespace WebApplication.ApiControllers
 {
@@ -20,11 +21,11 @@ namespace WebApplication.ApiControllers
     public class UserController : ControllerBase
     {
         private IUserService _userService;
-        private readonly IAppSettings _appSettings;
-        public UserController(IUserService userService, IAppSettings appSettings)
+        private readonly AppSettings _appSettings;
+        public UserController(IUserService userService, IOptions<AppSettings> appSettings)
         {
             _userService = userService;
-            _appSettings = appSettings;
+            _appSettings = appSettings.Value;
         }
 
         [AllowAnonymous]
