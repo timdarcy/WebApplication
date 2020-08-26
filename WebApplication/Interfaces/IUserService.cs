@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using WebApplication.Enums;
+﻿using WebApplication.Enums;
 using WebApplication.Models.DataModels;
 
 namespace WebApplication.Interfaces
@@ -12,5 +8,7 @@ namespace WebApplication.Interfaces
         User GetUser(string email, string password);
 
         UserStatus CreateUser(User user, string password);
+
+        User GetUserById(int id);
     }
 }

@@ -57,6 +57,11 @@ namespace WebApplication.Services
             return UserStatus.UserCreated;
         }
 
+        public User GetUserById(int id)
+        {
+            return _context.User.Find(id); 
+        }
+
         private static void CreatePasswordHash(string password, out byte[] hash, out byte[] salt)
         {
             if (password == null) throw new ArgumentNullException("password");

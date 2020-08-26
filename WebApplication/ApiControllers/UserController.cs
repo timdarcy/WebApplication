@@ -76,6 +76,11 @@ namespace WebApplication.ApiControllers
             
             
         }
+        [HttpGet("getdata")]
+        public IActionResult GetData()
+        {
+            return Ok();
+        }
 
         [HttpPut("update/{id}")]
         public IActionResult Update(int id, [FromBody]Update model)

@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Formik, Field, Form } from 'formik';
 import { Button } from 'reactstrap';
+import { get } from 'http';
 
 interface SignUpValues {
     firstName: string;
@@ -53,6 +54,14 @@ class Authentication extends React.Component<Props,State>{
                     axios.post('/api/user/login', values)
                         .then((response: any) => {
                             console.log(response)
+
+                            axios.get('api/user/getdata', {
+                                headers: { 'Authorization': `Bearer ${response.data.token}`}
+                            })
+                                .then((response: any) => {
+                                    console.log(response)
+                                })
+
                         });
                     }
                 }
