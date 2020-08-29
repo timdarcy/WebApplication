@@ -1,7 +1,9 @@
 import * as React from 'react';
 import { Formik, Field, Form } from 'formik';
 import { Button } from 'reactstrap';
-import { get } from 'http';
+import { connect } from 'react-redux';
+import { ApplicationState } from '../store';
+import * as AuthenticationStore from '../store/Authentication';
 
 interface SignUpValues {
     firstName: string;
@@ -16,7 +18,9 @@ interface LoginValues {
     password: string;
 }
 
-interface Props { }
+type Props =
+    AuthenticationStore.AuthenticationState &
+    typeof AuthenticationStore.actionCreators
 
 interface State {
     displayLoginForm: boolean;
@@ -24,7 +28,7 @@ interface State {
 
 const axios = require('axios').default;
 
-class Authentication extends React.Component<Props,State>{
+class Authentication extends React.Component<Props>{
     
     state: State = {
         displayLoginForm: true
@@ -54,7 +58,11 @@ class Authentication extends React.Component<Props,State>{
                     axios.post('/api/user/login', values)
                         .then((response: any) => {
                             console.log(response)
-
+                            if (response.data.token) {
+                                this.props.updateToken(response.data.token)
+                                console.log("Props", this.props);
+                            }
+                            
                             axios.get('api/user/getdata', {
                                 headers: { 'Authorization': `Bearer ${response.data.token}`}
                             })
@@ -133,4 +141,8 @@ class Authentication extends React.Component<Props,State>{
     }
 }
 
-export default Authentication;
+
+export default connect(
+    (state: ApplicationState) => state,
+    AuthenticationStore.actionCreators
+)(Authentication);
