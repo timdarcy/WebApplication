@@ -3,6 +3,8 @@ import thunk from 'redux-thunk';
 import { connectRouter, routerMiddleware } from 'connected-react-router';
 import { History } from 'history';
 import { ApplicationState, reducers } from './';
+import storage from 'redux-persist/lib/storage/session';
+import { persistStore, persistReducer } from 'redux-persist'
 
 export default function configureStore(history: History, initialState?: ApplicationState) {
     const middleware = [
@@ -21,9 +23,19 @@ export default function configureStore(history: History, initialState?: Applicat
         enhancers.push(windowIfDefined.__REDUX_DEVTOOLS_EXTENSION__());
     }
 
-    return createStore(
-        rootReducer,
+    const persistConfig = {
+        key: 'root',
+        storage,
+    }
+
+    const persistedReducer = persistReducer(persistConfig, rootReducer)
+
+    const store = createStore(
+        persistedReducer,
         initialState,
         compose(applyMiddleware(...middleware), ...enhancers)
     );
+    const persistor = persistStore(store)
+
+    return { store, persistor};
 }

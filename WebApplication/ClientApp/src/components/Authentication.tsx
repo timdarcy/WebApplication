@@ -143,6 +143,6 @@ class Authentication extends React.Component<Props>{
 
 
 export default connect(
-    (state: ApplicationState) => state,
+    (state: ApplicationState) => state.authentication,
     AuthenticationStore.actionCreators
 )(Authentication);
