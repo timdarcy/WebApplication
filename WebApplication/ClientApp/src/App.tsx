@@ -8,7 +8,7 @@ import Authentication from './components/Authentication';
 import { ApplicationState } from './store';
 import { connect } from 'react-redux';
 
-import './custom.css'
+import './custom.scss'
 
 class App extends React.Component<ApplicationState> {
 
