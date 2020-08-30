@@ -5,6 +5,7 @@ import Home from './components/Home';
 import Counter from './components/Counter';
 import FetchData from './components/FetchData';
 import Authentication from './components/Authentication';
+import Board from './components/WorkflowBoard';
 import { ApplicationState } from './store';
 import { connect } from 'react-redux';
 
@@ -19,6 +20,7 @@ class App extends React.Component<ApplicationState> {
             <Layout>
                 <Route exact path='/' component={Home} />
                 <Route path='/counter' component={Counter} />
+                <Route path='/board' component={Board}/>
                 <Route path='/fetch-data/:startDateIndex?' component={FetchData} />
             </Layout>
         )
@@ -30,7 +32,6 @@ class App extends React.Component<ApplicationState> {
         )
     }
     render() {
-        console.log(this.props)
         return (
 
             this.props.authentication && this.props.authentication.authToken

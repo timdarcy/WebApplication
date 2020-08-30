@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { ApplicationState } from '../store';
 import * as AuthenticationStore from '../store/Authentication';
 import CustomSubmitButton from './CustomSubmitButton';
-import { error } from 'console';
 
 interface SignUpValues {
     firstName: string;
@@ -31,10 +30,6 @@ interface State {
 
 const axios = require('axios').default;
 
-function SubmitButtonWithSpinner(isSubmitting: boolean, text: string ){
-    return <Button color="primary" type="submit">{text}{isSubmitting ? <Spinner size="sm" color="light"/> : ""}</Button>
-        
-}
 
 class Authentication extends React.Component<Props>{
     

@@ -47,3 +47,28 @@ form {
     }
 }
 
+.side-nav {
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding-top: 60px;
+    padding-right: 20px;
+    border-right: solid 1px #dbe0dd;
+    width: 150px;
+}
+
+.main-content{
+    margin-left: 150px;
+}
+.lane {
+    width: 200px;
+    border: solid 1px #dbe0dd;
+    border-radius: 5px;
+    margin-top: 20px;
+    margin-left: 10px;
+    margin-right: 10px;
+    min-height: 100px;
+    display: inline-block;
+}
+
