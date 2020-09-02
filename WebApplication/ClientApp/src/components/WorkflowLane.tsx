@@ -17,7 +17,7 @@ class WorkflowLane extends React.Component<Props>{
 
     renderCard = () => {
         return (
-            <div>
+            <div className="wf-card">
 
             </div>
             )
@@ -25,8 +25,9 @@ class WorkflowLane extends React.Component<Props>{
 
     render() {
         return (
-            <ul className="lane" >
-            
+            <ul className="wf-lane" >
+                {this.renderCard()}
+                 
             </ul >
         )
         

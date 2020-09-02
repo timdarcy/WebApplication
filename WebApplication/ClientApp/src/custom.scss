@@ -61,14 +61,25 @@ form {
 .main-content{
     margin-left: 150px;
 }
-.lane {
+.wf-lane {
     width: 200px;
-    border: solid 1px #dbe0dd;
+    border: solid 1px #c1c1c1;
     border-radius: 5px;
     margin-top: 20px;
     margin-left: 10px;
     margin-right: 10px;
     min-height: 100px;
     display: inline-block;
+    padding-left: unset;
+}
+.wf-card {
+    width: 90%;
+    min-height: 50px;
+    border: solid 2px #7d67f7;
+    border-radius: 5px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 5%;
+    margin-right: 5%;
 }
 
