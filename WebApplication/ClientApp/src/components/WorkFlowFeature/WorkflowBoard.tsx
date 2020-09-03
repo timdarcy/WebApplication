@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { ApplicationState } from '../store'
-import * as WorkflowBoardStore from '../store/WorkflowBoard'
+import { ApplicationState } from '../../store'
+import * as WorkflowBoardStore from '../../store/WorkflowBoard'
 import WorkflowLane from './WorkflowLane'
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
 
 type Props = 
     WorkflowBoardStore.WorkflowBoardState &
@@ -41,11 +43,9 @@ class WorkflowBoard extends React.Component<Props>{
                 <WorkflowLane />
                 <WorkflowLane />
             </>
+
             )
     }
 }
 
-export default connect(
-    (state: ApplicationState) => state.board,
-    WorkflowBoardStore.actionCreators
-)(WorkflowBoard);
+export default WorkflowBoard;
