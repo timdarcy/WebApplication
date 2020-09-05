@@ -7,30 +7,27 @@ import { DraggableTypes } from './DraggableTypeConstants';
 import classNames from 'classnames';
 
 
-interface Props {
-    text: string;
-}
+type Props = WorkflowBoardStore.Card 
 
-interface State {
-    
-
-}
-
-const WorkflowCard: React.FC<Props> = () =>{
+const WorkflowCard: React.FC<Props> = (props) =>{
 
     
-
 
     const [{ isDragging }, drag] = useDrag({
-        item: { type: DraggableTypes.CARD },
+        item: {
+            type: DraggableTypes.CARD,
+            id: props.id,
+            laneId: props.laneId
+        },
         collect: (monitor) => ({
-            isDragging: monitor.isDragging(),
+            isDragging: monitor.isDragging()
           })
     });
 
     return (
         <div ref={drag} className={classNames({"wf-card": true, "wf-card-dragging": isDragging})}>
-
+            <h3>Id: {props.id} - Title: {props.title}</h3>
+            <p>Description: {props.description}</p>
         </div>
     )
         
