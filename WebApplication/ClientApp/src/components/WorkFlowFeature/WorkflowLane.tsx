@@ -6,25 +6,18 @@ import WorkflowCard from './WorkflowCard';
 import { DraggableTypes } from './DraggableTypeConstants';
 import { useDrop } from 'react-dnd'
 
+type Props = WorkflowBoardStore.Lane &
+    typeof WorkflowBoardStore.actionCreators
 
-type Props = 
-    WorkflowBoardStore.Lane 
 
-interface State {
-    
 
-}
-
-const WorkflowLane: React.FC<Props> = () => {
+const WorkflowLane: React.FC<Props> = (props) => {
     const [numberOfCards, setNumberOfCards] = useState(1);
 
-    const moveCard = () => {
-        setNumberOfCards(numberOfCards + 1);
-    }
 
     const [{ isOver }, drop] = useDrop({
         accept: DraggableTypes.CARD,
-        drop: () => moveCard(),
+        drop: () => props.moveCard,
         collect: (mon: any) => ({
             isOver: !!mon.isOver(),
             canDrop: !!mon.canDrop()
@@ -34,7 +27,9 @@ const WorkflowLane: React.FC<Props> = () => {
     return (
         <ul ref={drop} className="wf-lane" >
             <p>Number of cards: {numberOfCards}</p>
-            <WorkflowCard/>
+            {props.cards.forEach(card => {
+                <WorkflowCard {...card} />
+            })}
                 
         </ul >
     )
@@ -42,4 +37,7 @@ const WorkflowLane: React.FC<Props> = () => {
         
 }
 
-export default WorkflowLane;
+export default connect(
+    (state: WorkflowBoardStore.WorkflowBoardState) =>
+        WorkflowBoardStore.actionCreators
+)(WorkflowLane);

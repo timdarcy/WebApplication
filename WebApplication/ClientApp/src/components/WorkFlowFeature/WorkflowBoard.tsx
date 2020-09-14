@@ -40,12 +40,16 @@ class WorkflowBoard extends React.Component<Props>{
     render() {
         return (
             <>
-                <WorkflowLane />
-                <WorkflowLane />
+                {this.props.lanes.forEach(lane => {
+                    <WorkflowLane {...lane}/>
+                })}
             </>
 
             )
     }
 }
 
-export default WorkflowBoard;
+export default connect(
+    (state: WorkflowBoardStore.WorkflowBoardState) => state,
+    WorkflowBoardStore.actionCreators
+)(WorkflowBoard);

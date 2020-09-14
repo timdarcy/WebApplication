@@ -7,7 +7,9 @@ import { DraggableTypes } from './DraggableTypeConstants';
 import classNames from 'classnames';
 
 
-type Props = WorkflowBoardStore.Card 
+type Props = WorkflowBoardStore.Card
+
+
 
 const WorkflowCard: React.FC<Props> = (props) =>{
 

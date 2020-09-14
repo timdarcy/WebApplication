@@ -56,7 +56,8 @@ export const reducer: Reducer<WorkflowBoardState> = (state: WorkflowBoardState |
                 cards: [{
                     id: "Card 1",
                     title:"Card 1",
-                    description: "this is card 1"
+                    description: "this is card 1",
+                    laneId: "Lane 1"
                 }]
             }]
         }
