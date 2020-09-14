@@ -28,7 +28,7 @@ const WorkflowLane: React.FC<Props> = (props) => {
         <ul ref={drop} className="wf-lane" >
             <p>Number of cards: {numberOfCards}</p>
             {props.cards.forEach(card => {
-                <WorkflowCard {...card} />
+                return (<WorkflowCard {...card} />)
             })}
                 
         </ul >

@@ -41,7 +41,7 @@ class WorkflowBoard extends React.Component<Props>{
         return (
             <>
                 {this.props.lanes.forEach(lane => {
-                    <WorkflowLane {...lane}/>
+                    return (<WorkflowLane {...lane}/>)
                 })}
             </>
 
