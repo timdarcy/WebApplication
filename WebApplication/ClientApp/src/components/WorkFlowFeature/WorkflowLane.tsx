@@ -3,41 +3,55 @@ import { connect } from 'react-redux';
 import { ApplicationState } from '../../store';
 import * as WorkflowBoardStore from '../../store/WorkflowBoard';
 import WorkflowCard from './WorkflowCard';
-import { DraggableTypes } from './DraggableTypeConstants';
-import { useDrop } from 'react-dnd'
+import styled from 'styled-components';
+import { Droppable } from 'react-beautiful-dnd';
 
-type Props = WorkflowBoardStore.Lane &
-    typeof WorkflowBoardStore.actionCreators
+const Container = styled.div`
+    margin: 8px;
+    border: 1px solid lightgrey;
+    border-radius: 2px;
+`;
+const Title  = styled.h3`
+    padding: 8px;
+`;
+const CardList = styled.div`
+    padding: 8px;
+`;
 
-
-
-const WorkflowLane: React.FC<Props> = (props) => {
-    const [numberOfCards, setNumberOfCards] = useState(1);
-
-
-    const [{ isOver }, drop] = useDrop({
-        accept: DraggableTypes.CARD,
-        drop: () => props.moveCard,
-        collect: (mon: any) => ({
-            isOver: !!mon.isOver(),
-            canDrop: !!mon.canDrop()
-        })
-      })
-
-    return (
-        <ul ref={drop} className="wf-lane" >
-            <p>Number of cards: {numberOfCards}</p>
-            {props.cards.forEach(card => {
-                return (<WorkflowCard {...card} />)
-            })}
-                
-        </ul >
-    )
-        
-        
+interface Props {
+    key: string,
+    lane: any,
+    cards: any
 }
 
-export default connect(
-    (state: WorkflowBoardStore.WorkflowBoardState) =>
-        WorkflowBoardStore.actionCreators
-)(WorkflowLane);
+
+class WorkflowLane extends React.Component<Props>{
+    constructor(props: any) {
+        super(props)
+    }
+
+    render() {
+        return (
+            <Container>
+                <Title>{this.props.lane.title}</Title>
+                <Droppable droppableId={this.props.lane.id}>
+                    {(provided: any) => (
+                        <CardList 
+                            innerRef={provided.innerRef}
+                            {...provided.droppableProps}
+                        >
+                            
+                            {this.props.cards.map((card: any, index:any) => <WorkflowCard key={card.id} card={card} index={index}/>)}
+                            {provided.placeholder}
+                        </CardList>
+                    )}
+                    
+                </Droppable>
+                
+            </Container>
+        )
+    }
+}
+
+
+export default WorkflowLane;

@@ -50,7 +50,8 @@ export const actionCreators = {
 export const reducer: Reducer<WorkflowBoardState> = (state: WorkflowBoardState | undefined, incomingAction: Action): WorkflowBoardState => {
     if (state === undefined) {
         return {
-            lanes: [{
+            lanes: [
+                {
                 id: "Lane 1",
                 title: "New 1",
                 cards: [{
@@ -59,7 +60,18 @@ export const reducer: Reducer<WorkflowBoardState> = (state: WorkflowBoardState |
                     description: "this is card 1",
                     laneId: "Lane 1"
                 }]
-            }]
+                },
+                {
+                    id: "Lane 2",
+                    title: "New 1",
+                    cards: [{
+                        id: "Card 1",
+                        title: "Card 1",
+                        description: "this is card 1",
+                        laneId: "Lane 2"
+                    }]
+                }
+            ]
         }
     }
     const action = incomingAction as KnownAction;

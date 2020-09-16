@@ -8,8 +8,6 @@ import Authentication from './components/Authentication';
 import Board from './components/WorkFlowFeature/WorkflowBoard';
 import { ApplicationState } from './store';
 import { connect } from 'react-redux';
-import { HTML5Backend } from 'react-dnd-html5-backend'
-import { DndProvider } from 'react-dnd'
 
 import './custom.scss'
 
@@ -19,14 +17,14 @@ class App extends React.Component<ApplicationState> {
     authenticatedView = () => {
         console.log("authenticatedView")
         return (
-            <DndProvider backend={HTML5Backend}>
+            
                 <Layout>
                     <Route exact path='/' component={Home} />
                     <Route path='/counter' component={Counter} />
                     <Route path='/board' component={Board}/>
                     <Route path='/fetch-data/:startDateIndex?' component={FetchData} />
                 </Layout>
-            </DndProvider>
+            
         )
     }
     unAuthenticatedView = () => {
