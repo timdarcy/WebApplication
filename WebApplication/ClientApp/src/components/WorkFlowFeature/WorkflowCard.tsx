@@ -13,7 +13,6 @@ const Container = styled.div`
 `
 
 interface Props {
-    key: string,
     card: {
         id: string,
         content: string
@@ -35,9 +34,9 @@ class WorkflowCard extends React.Component<Props>{
             >
                 {(provided: any) => (
                     <Container
+                        ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
-                        innerRef={provided.innerRef}
                     >
                         <h3>Card id: {this.props.card.id}</h3>
                         <p>Description: {this.props.card.content}</p>

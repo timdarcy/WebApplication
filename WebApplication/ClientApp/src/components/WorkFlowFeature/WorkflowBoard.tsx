@@ -36,8 +36,33 @@ const initialData: State = {
 class WorkflowBoard extends React.Component<Props>{
     state = initialData;
 
-    onDragEnd = () => {
-        
+    onDragEnd = (result: any) => {
+        const { destination, source, draggableId } = result;
+        if (!destination) {
+            return;
+        }
+        if (destination.droppableId === source.droppableId &&
+            destination.index === source.index) {
+            return;
+        }
+        const lane = this.state.lanes[source.droppableId];
+        const newCardIds = Array.from(lane.cardIds);
+        newCardIds.splice(source.index, 1);
+        newCardIds.splice(destination.index, 0, draggableId);
+
+        const newLane = {
+            ...lane,
+            cardIds: newCardIds
+        };
+        const newState = {
+            ...this.state,
+            lanes: {
+                ...this.state.lanes,
+                [newLane.id]: newLane
+            }
+        };
+        this.setState(newState);
+        //call server here
     }
 
     render() {
@@ -46,10 +71,10 @@ class WorkflowBoard extends React.Component<Props>{
                 onDragEnd={this.onDragEnd}
             >
             {   this.state.laneOrder.map((laneId: string) => {
-                const lane = this.state.lanes[laneId];
-                const cards = lane.cardIds.map((cardId: string) => this.state.cards[cardId])
+                    const lane = this.state.lanes[laneId];
+                    const cards = lane.cardIds.map((cardId: string) => this.state.cards[cardId])
 
-                return <WorkflowLane key={lane.Id} lane={lane} cards={cards}/>
+                    return <WorkflowLane key={laneId} lane={lane} cards={cards}/>
                 })
             }
             </DragDropContext>

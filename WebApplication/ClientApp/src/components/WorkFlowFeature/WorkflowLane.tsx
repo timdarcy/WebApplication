@@ -19,7 +19,6 @@ const CardList = styled.div`
 `;
 
 interface Props {
-    key: string,
     lane: any,
     cards: any
 }
@@ -37,7 +36,7 @@ class WorkflowLane extends React.Component<Props>{
                 <Droppable droppableId={this.props.lane.id}>
                     {(provided: any) => (
                         <CardList 
-                            innerRef={provided.innerRef}
+                            ref={provided.innerRef}
                             {...provided.droppableProps}
                         >
                             
