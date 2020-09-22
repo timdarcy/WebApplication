@@ -38,6 +38,10 @@ class WorkflowLane extends React.Component<Props>{
         super(props)
     }
 
+    handleCardPropsUpdate = (newProps: any) => {
+
+    }
+
     render() {
         return (
             <Draggable

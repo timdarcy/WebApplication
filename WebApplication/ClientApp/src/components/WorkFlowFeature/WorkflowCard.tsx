@@ -1,8 +1,8 @@
 import * as React from 'react';
 import * as WorkflowBoardStore from '../../store/WorkflowBoard';
-import classNames from 'classnames';
 import styled from 'styled-components'
 import {Draggable, DraggableStateSnapshot, DraggableProvided} from 'react-beautiful-dnd'
+import { connect, MapStateToProps, DispatchProp } from 'react-redux';
 
 const Container = styled.div`
     border: 1px solid lightgrey;
@@ -13,18 +13,33 @@ const Container = styled.div`
     background-color: ${props => (props.isDragging ? "lightgreen": "white")}
 `
 
-interface Props {
+/*interface Props {
     card: {
         id: string,
         content: string
     },
-    index: any
+    index: any,
+    WorkflowBoardStore.actionCreators.updateCard
+}*/
+type Props = {
+    card: WorkflowBoardStore.Card,
+    index: string,
+    actions: typeof WorkflowBoardStore.actionCreators
 }
 
 
 class WorkflowCard extends React.Component<Props>{
     constructor(props: Props){
         super(props)
+    }
+
+    handleDescriptionChange = (event: any) => {
+       var newCard = {
+            id: this.props.card.id,
+            content: event.target.value
+        }
+        this.props.actions.updateCard(newCard)
+        console.log(newCard)
     }
 
     render(){
@@ -41,7 +56,7 @@ class WorkflowCard extends React.Component<Props>{
                         isDragging={snapshot.isDragging}
                     >
                         <h3>Card id: {this.props.card.id}</h3>
-                        <p>Description: {this.props.card.content}</p>
+                        <input onChange={this.handleDescriptionChange} value={this.props.card.content}/>
                     </Container>
                 )}
                 
@@ -50,4 +65,15 @@ class WorkflowCard extends React.Component<Props>{
     }
 }
 
-export default WorkflowCard;
+function mergeProps(stateProps: any, dispatchProps: any, ownProps: any) {
+    return {
+        ...ownProps,
+        actions: dispatchProps  
+    }
+}
+
+export default connect(
+    null,
+    WorkflowBoardStore.actionCreators,
+    mergeProps
+)(WorkflowCard);

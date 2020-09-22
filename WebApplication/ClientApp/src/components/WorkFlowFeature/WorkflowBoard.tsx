@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { ApplicationState } from '../../store'
+import { Applicationprops, ApplicationState } from '../../store'
 import * as WorkflowBoardStore from '../../store/WorkflowBoard'
 import WorkflowLane from './WorkflowLane';
 import { DragDropContext, DropResult, Droppable, DroppableProvided } from 'react-beautiful-dnd';
@@ -14,43 +14,10 @@ type Props =
     WorkflowBoardStore.WorkflowBoardState &
     typeof WorkflowBoardStore.actionCreators
 
-interface State {
-    cards: any,
-    lanes: any,
-    laneOrder: any
 
-}
-
-const initialData: State = {
-    cards: {
-        'card-1': { id: 'card-1', content: 'this is card 1' },
-        'card-2': { id: 'card-2', content: 'this is card 2' },
-        'card-3': { id: 'card-3', content: 'this is card 3' },
-        'card-4': { id: 'card-4', content: 'this is card 4' },
-    }, 
-    lanes: {
-        'lane-1': {
-            id: 'lane-1',
-            title: 'Lane 1 title',
-            cardIds: ['card-1', 'card-2', 'card-3', 'card-4']
-        },
-        'lane-2': {
-            id: 'lane-2',
-            title: 'Lane 2 title',
-            cardIds: []
-        },
-        'lane-3': {
-            id: 'lane-3',
-            title: 'Lane 3 title',
-            cardIds: []
-        }
-    },
-    laneOrder: ['lane-1', 'lane-2', 'lane-3']
-}
 
 class WorkflowBoard extends React.Component<Props>{
-    state = initialData;
-
+    
     onDragEnd = (result: DropResult) => {
         const { destination, source, draggableId, type } = result;
         if (!destination) {
@@ -62,20 +29,20 @@ class WorkflowBoard extends React.Component<Props>{
         }
 
         if (type === 'lane') {
-            const newLaneOrder = Array.from(this.state.laneOrder);
+            const newLaneOrder = Array.from(this.props.laneOrder);
             newLaneOrder.splice(source.index, 1);
             newLaneOrder.splice(destination.index, 0, draggableId);
 
             const newState = {
-                ...this.state,
+                ...this.props,
                 laneOrder: newLaneOrder
             };
-            this.setState(newState);
+            this.props.updateState(newState)
             return
         }
         
-        const startLane = this.state.lanes[source.droppableId];
-        const endLane = this.state.lanes[destination.droppableId]
+        const startLane = this.props.lanes[source.droppableId];
+        const endLane = this.props.lanes[destination.droppableId]
 
         if (startLane === endLane) {
             //moving in the same lane
@@ -88,13 +55,13 @@ class WorkflowBoard extends React.Component<Props>{
                 cardIds: newCardIds
             };
             const newState = {
-                ...this.state,
+                ...this.props,
                 lanes: {
-                    ...this.state.lanes,
+                    ...this.props.lanes,
                     [newLane.id]: newLane
                 }
             };
-            this.setState(newState);
+            this.props.updateState(newState);
             //call server here
         }
         else {
@@ -114,20 +81,21 @@ class WorkflowBoard extends React.Component<Props>{
             };
 
             const newState = {
-                ...this.state,
+                ...this.props,
                 lanes: {
-                    ...this.state.lanes,
+                    ...this.props.lanes,
                     [newStartLane.id]: newStartLane,
                     [newEndLane.id]: newEndLane
                 }
             };
-            this.setState(newState);
+            this.props.updateState(newState);
             //call server here
         };
         
     }
 
     render() {
+        const test = this.props;
         return (
             <DragDropContext
                 onDragEnd={this.onDragEnd}
@@ -142,9 +110,9 @@ class WorkflowBoard extends React.Component<Props>{
                             {...provided.droppableProps}
                             ref={provided.innerRef}
                         >
-                            {this.state.laneOrder.map((laneId: string, index: any) => {
-                                const lane = this.state.lanes[laneId];
-                                const cards = lane.cardIds.map((cardId: string) => this.state.cards[cardId])
+                            {this.props.laneOrder.map((laneId: string, index: any) => {
+                                const lane = this.props.lanes[laneId];
+                                const cards = lane.cardIds.map((cardId: string) => this.props.cards[cardId])
 
                                 return <WorkflowLane key={laneId} lane={lane} cards={cards} index={index}/>
                             })}
@@ -158,4 +126,7 @@ class WorkflowBoard extends React.Component<Props>{
     }
 }
 
-export default WorkflowBoard;
+export default connect(
+    (state: ApplicationState) => state.board,
+    WorkflowBoardStore.actionCreators
+)(WorkflowBoard);

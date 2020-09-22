@@ -1,47 +1,50 @@
 import { Action, Reducer } from 'redux';
-import { isArray } from 'util';
 
 // -----------------
 // STATE - This defines the type of data maintained in the Redux store.
 
 export interface WorkflowBoardState {
-    lanes: Array<Lane>;
+    lanes: any,
+    cards: any,
+    laneOrder: Array<string>
 }
 export interface Lane {
     id: string,
     title: string,
-    cards: Array<Card>
+    cards: Array<string>
 }
 export interface Card {
     id: string,
-    title: string,
-    description: string,
-    laneId: string
+    content: string
 }
+
 
 // -----------------
 // ACTIONS - These are serializable (hence replayable) descriptions of state transitions.
 // They do not themselves have any side-effects; they just describe something that is going to happen.
 // Use @typeName and isActionType for type detection that works even after serialization/deserialization.
 
-export interface MoveCardAction {
-    type: 'MOVE_CARD';
-    oldState: Array<Lane>;
-    cardId: string;
-    oldLaneId: string;
-    newLaneId: string;
+export interface UpdateCardAction {
+    type: 'UPDATE_CARD';
+    updatedCard: Card;
+}
+
+export interface UpdateStateAction {
+    type: 'UPDATE_STATE';
+    newState: WorkflowBoardState;
 }
 
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
-export type KnownAction = MoveCardAction;
+export type KnownAction = UpdateCardAction | UpdateStateAction;
 
 // ----------------
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
 // They don't directly mutate state, but they can have external side-effects (such as loading data).
 
 export const actionCreators = {
-    moveCard: (oldState: Array<Lane>, cardId: string, oldLaneId: string, newLaneId: string) => ({ type: 'MOVE_CARD', oldState: oldState, cardId: cardId, oldLaneId: oldLaneId, newLaneId: newLaneId} as MoveCardAction)
+    updateCard: (updatedCard: Card) => ({ type: 'UPDATE_CARD', updatedCard: updatedCard } as UpdateCardAction),
+    updateState: (newState: WorkflowBoardState) => ({ type: 'UPDATE_STATE', newState: newState} as UpdateStateAction)
 };
 
 // ----------------
@@ -50,69 +53,46 @@ export const actionCreators = {
 export const reducer: Reducer<WorkflowBoardState> = (state: WorkflowBoardState | undefined, incomingAction: Action): WorkflowBoardState => {
     if (state === undefined) {
         return {
-            lanes: [
-                {
-                id: "Lane 1",
-                title: "New 1",
-                cards: [{
-                    id: "Card 1",
-                    title:"Card 1",
-                    description: "this is card 1",
-                    laneId: "Lane 1"
-                }]
+            cards: {
+                'card-1': { id: 'card-1', content: 'this is card 1' },
+                'card-2': { id: 'card-2', content: 'this is card 2' },
+                'card-3': { id: 'card-3', content: 'this is card 3' },
+                'card-4': { id: 'card-4', content: 'this is card 4' },
+            },
+            lanes: {
+                'lane-1': {
+                    id: 'lane-1',
+                    title: 'Lane 1 title',
+                    cardIds: ['card-1', 'card-2', 'card-3', 'card-4']
                 },
-                {
-                    id: "Lane 2",
-                    title: "New 1",
-                    cards: [{
-                        id: "Card 1",
-                        title: "Card 1",
-                        description: "this is card 1",
-                        laneId: "Lane 2"
-                    }]
+                'lane-2': {
+                    id: 'lane-2',
+                    title: 'Lane 2 title',
+                    cardIds: []
+                },
+                'lane-3': {
+                    id: 'lane-3',
+                    title: 'Lane 3 title',
+                    cardIds: []
                 }
-            ]
+            },
+            laneOrder: ['lane-1', 'lane-2', 'lane-3']
         }
     }
     const action = incomingAction as KnownAction;
     switch (action.type) {
-        case 'MOVE_CARD':
-            {
-                var cardToMove = <Card>{};
-                var updatedState = pullOutCardToMove(action.oldState, cardToMove, action.oldLaneId, action.cardId)
-                cardToMove.laneId = action.newLaneId;
-                updatedState = addCardAtNewLocation(updatedState, cardToMove, action.newLaneId);
-                
+        case 'UPDATE_CARD':
+            var newState = {
+                ...state
             }
-            
+            newState.cards[action.updatedCard.id] = { ...action.updatedCard }
+            console.log("UpdateCardAction: ", newState)
+            return newState
+        case 'UPDATE_STATE':
+            return action.newState
         default:
             return state;
     }
 };
 
-function pullOutCardToMove(state: Array<Lane>, cardToMove: Card, oldLaneId: string, cardId: string): Array<Lane>  {
-    return state.map(lane => {
-        //find lane where card used to be
-        if (lane.id === oldLaneId) {
-            //pull out card to move
-            lane.cards = lane.cards.filter((card) => {
-                if (card.id !== cardId) {
-                    return true;
-                }
-                cardToMove = { ...card };
-                return false;
-            });
-            
-        }
-        return lane;
-    });
-}
 
-function addCardAtNewLocation(state: Array<Lane>, cardToMove: Card, newLaneId: string) {
-    return state.map(lane => {
-        if (lane.id === newLaneId) {
-            lane.cards.push(cardToMove)
-        }
-        return lane;
-    })
-}
