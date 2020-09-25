@@ -27,9 +27,10 @@ const CardList = styled.div`
 `;
 
 interface Props {
-    lane: any,
-    cards: any,
-    index: any
+    lane: WorkflowBoardStore.Lane,
+    cards: Array<WorkflowBoardStore.Card>,
+    index: any,
+    actions: typeof WorkflowBoardStore.actionCreators
 }
 
 
@@ -40,6 +41,14 @@ class WorkflowLane extends React.Component<Props>{
 
     handleCardPropsUpdate = (newProps: any) => {
 
+    }
+
+    handleTitleChange = (event: any) => {
+        var newLane = {
+            ...this.props.lane,
+            ['title']: event.target.value
+        }
+        this.props.actions.updateLane(newLane)
     }
 
     render() {
@@ -55,7 +64,7 @@ class WorkflowLane extends React.Component<Props>{
                     >
                         <Title
                             {...provided.dragHandleProps}
-                        >{this.props.lane.title}</Title>
+                        ><input onChange={this.handleTitleChange} value={this.props.lane.title} /></Title>
                         <Droppable
                             droppableId={this.props.lane.id}
                             type="card"
@@ -81,5 +90,15 @@ class WorkflowLane extends React.Component<Props>{
     }
 }
 
+function mergeProps(stateProps: any, dispatchProps: any, ownProps: any) {
+    return {
+        ...ownProps,
+        actions: dispatchProps
+    }
+}
 
-export default WorkflowLane;
+export default connect(
+    null,
+    WorkflowBoardStore.actionCreators,
+    mergeProps
+)(WorkflowLane);

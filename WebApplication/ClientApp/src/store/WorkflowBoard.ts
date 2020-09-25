@@ -4,8 +4,8 @@ import { Action, Reducer } from 'redux';
 // STATE - This defines the type of data maintained in the Redux store.
 
 export interface WorkflowBoardState {
-    lanes: any,
-    cards: any,
+    lanes: Array<Lane>,
+    cards: Array<Card>,
     laneOrder: Array<string>
 }
 export interface Lane {
@@ -29,6 +29,11 @@ export interface UpdateCardAction {
     updatedCard: Card;
 }
 
+export interface UpdateLaneAction {
+    type: 'UPDATE_LANE';
+    updatedLane: Lane;
+}
+
 export interface UpdateStateAction {
     type: 'UPDATE_STATE';
     newState: WorkflowBoardState;
@@ -36,7 +41,7 @@ export interface UpdateStateAction {
 
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
-export type KnownAction = UpdateCardAction | UpdateStateAction;
+export type KnownAction = UpdateCardAction | UpdateLaneAction | UpdateStateAction;
 
 // ----------------
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
@@ -44,6 +49,7 @@ export type KnownAction = UpdateCardAction | UpdateStateAction;
 
 export const actionCreators = {
     updateCard: (updatedCard: Card) => ({ type: 'UPDATE_CARD', updatedCard: updatedCard } as UpdateCardAction),
+    updateLane: (updatedLane: Lane) => ({ type: 'UPDATE_LANE', updatedLane: updatedLane} as UpdateLaneAction),
     updateState: (newState: WorkflowBoardState) => ({ type: 'UPDATE_STATE', newState: newState} as UpdateStateAction)
 };
 
@@ -86,7 +92,12 @@ export const reducer: Reducer<WorkflowBoardState> = (state: WorkflowBoardState |
                 ...state
             }
             newState.cards[action.updatedCard.id] = { ...action.updatedCard }
-            console.log("UpdateCardAction: ", newState)
+            return newState
+        case 'UPDATE_LANE':
+            var newState = {
+                ...state
+            }
+            newState.lanes[action.updatedLane.id] = { ...action.updatedLane }
             return newState
         case 'UPDATE_STATE':
             return action.newState
