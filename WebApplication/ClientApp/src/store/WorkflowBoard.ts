@@ -1,11 +1,12 @@
 import { Action, Reducer } from 'redux';
+import { v4 as uuidv4 } from 'uuid';
 
 // -----------------
 // STATE - This defines the type of data maintained in the Redux store.
 
 export interface WorkflowBoardState {
-    lanes: Array<Lane>,
-    cards: Array<Card>,
+    lanes: any,
+    cards: any,
     laneOrder: Array<string>
 }
 export interface Lane {
@@ -29,6 +30,11 @@ export interface UpdateCardAction {
     updatedCard: Card;
 }
 
+export interface AddNewCardAction {
+    type: 'ADD_NEW_CARD';
+    laneId: string;
+}
+
 export interface UpdateLaneAction {
     type: 'UPDATE_LANE';
     updatedLane: Lane;
@@ -41,7 +47,7 @@ export interface UpdateStateAction {
 
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
-export type KnownAction = UpdateCardAction | UpdateLaneAction | UpdateStateAction;
+export type KnownAction = UpdateCardAction | UpdateLaneAction | UpdateStateAction | AddNewCardAction;
 
 // ----------------
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
@@ -50,11 +56,20 @@ export type KnownAction = UpdateCardAction | UpdateLaneAction | UpdateStateActio
 export const actionCreators = {
     updateCard: (updatedCard: Card) => ({ type: 'UPDATE_CARD', updatedCard: updatedCard } as UpdateCardAction),
     updateLane: (updatedLane: Lane) => ({ type: 'UPDATE_LANE', updatedLane: updatedLane} as UpdateLaneAction),
-    updateState: (newState: WorkflowBoardState) => ({ type: 'UPDATE_STATE', newState: newState} as UpdateStateAction)
+    updateState: (newState: WorkflowBoardState) => ({ type: 'UPDATE_STATE', newState: newState } as UpdateStateAction),
+
+    addNewCard: (laneId: string) => ({ type: 'ADD_NEW_CARD', laneId: laneId } as AddNewCardAction)
 };
 
 // ----------------
 // REDUCER - For a given state and action, returns the new state. To support time travel, this must not mutate the old state.
+
+const createNewCard = () => {
+    return <Card>{
+        id: uuidv4(),
+        content: 'add some content'
+    }
+}
 
 export const reducer: Reducer<WorkflowBoardState> = (state: WorkflowBoardState | undefined, incomingAction: Action): WorkflowBoardState => {
     if (state === undefined) {
@@ -101,6 +116,15 @@ export const reducer: Reducer<WorkflowBoardState> = (state: WorkflowBoardState |
             return newState
         case 'UPDATE_STATE':
             return action.newState
+        case 'ADD_NEW_CARD':
+            var newCard = createNewCard();
+            var newState = {
+                ...state
+            }
+            newState.cards[newCard.id] = newCard;
+            newState.lanes[action.laneId].cardIds.push(newCard.id)
+            return newState;
+
         default:
             return state;
     }

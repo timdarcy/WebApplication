@@ -6,6 +6,7 @@ import WorkflowCard from './WorkflowCard';
 import styled from 'styled-components';
 import { Droppable, DroppableProvided, DroppableStateSnapshot, Draggable, DraggableProvided } from 'react-beautiful-dnd';
 
+
 const Container = styled.div`
     margin: 8px;
     border: 1px solid lightgrey;
@@ -25,10 +26,15 @@ const CardList = styled.div`
     flex-grow: 1;
     min-height:100px;
 `;
+const AddCard = styled.div`
+    padding: 8px;
+    flex-grow: 1;
+    cursor: pointer
+`
 
 interface Props {
     lane: WorkflowBoardStore.Lane,
-    cards: Array<WorkflowBoardStore.Card>,
+    cards: any,
     index: any,
     actions: typeof WorkflowBoardStore.actionCreators
 }
@@ -51,6 +57,10 @@ class WorkflowLane extends React.Component<Props>{
         this.props.actions.updateLane(newLane)
     }
 
+    handleAddCard = () => {
+        this.props.actions.addNewCard(this.props.lane.id);
+    }
+
     render() {
         return (
             <Draggable
@@ -70,15 +80,18 @@ class WorkflowLane extends React.Component<Props>{
                             type="card"
                         >
                             {(provided: DroppableProvided, snapshot: DroppableStateSnapshot) => (
-                                <CardList
-                                    ref={provided.innerRef}
-                                    {...provided.droppableProps}
-                                    isDraggingOver={snapshot.isDraggingOver}
-                                >
+                                <>
+                                    <CardList
+                                        ref={provided.innerRef}
+                                        {...provided.droppableProps}
+                                        isDraggingOver={snapshot.isDraggingOver}
+                                    >
 
-                                    {this.props.cards.map((card: any, index: any) => <WorkflowCard key={card.id} card={card} index={index} />)}
-                                    {provided.placeholder}
-                                </CardList>
+                                        {this.props.cards.map((card: any, index: any) => <WorkflowCard key={card.id} card={card} index={index} />)}
+                                        {provided.placeholder}
+                                    </CardList>
+                                    <AddCard onClick={this.handleAddCard}>Add Card</AddCard>
+                                </>
                             )}
 
                         </Droppable>
