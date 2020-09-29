@@ -16,6 +16,7 @@ export interface Lane {
 }
 export interface Card {
     id: string,
+    title: string,
     content: string
 }
 
@@ -67,6 +68,7 @@ export const actionCreators = {
 const createNewCard = () => {
     return <Card>{
         id: uuidv4(),
+        title: 'add a title',
         content: 'add some content'
     }
 }
@@ -75,16 +77,13 @@ export const reducer: Reducer<WorkflowBoardState> = (state: WorkflowBoardState |
     if (state === undefined) {
         return {
             cards: {
-                'card-1': { id: 'card-1', content: 'this is card 1' },
-                'card-2': { id: 'card-2', content: 'this is card 2' },
-                'card-3': { id: 'card-3', content: 'this is card 3' },
-                'card-4': { id: 'card-4', content: 'this is card 4' },
+                
             },
             lanes: {
                 'lane-1': {
                     id: 'lane-1',
                     title: 'Lane 1 title',
-                    cardIds: ['card-1', 'card-2', 'card-3', 'card-4']
+                    cardIds: []
                 },
                 'lane-2': {
                     id: 'lane-2',
