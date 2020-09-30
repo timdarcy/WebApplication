@@ -76,20 +76,20 @@ class Authentication extends React.Component<Props>{
                     }
                 }
             >
-                <Form>
-                    <Row className="auth-row">
+                <Form className="auth-form">
+                    <Row className="form-row">
                         <label htmlFor="email">Email</label>
                         <Field id="email" type="email" name="email" />
                     </Row>
 
-                    <Row className="auth-row">
+                    <Row className="form-row">
                         <label htmlFor="password">Password</label>
                         <Field id="password" name="password" type="password" />
                     </Row>
-                    <Row className="auth-row">
+                    <Row className="form-row">
                         <Button color="link" onClick={this.handleChangeToSignup}>Sign Up</Button>
                     </Row>
-                    <Row className="auth-row">
+                    <Row className="form-row">
                         <CustomSubmitButton
                             isSubmitting={this.state.isSubmitting}
                             text="Submit"
@@ -125,35 +125,35 @@ class Authentication extends React.Component<Props>{
                 }
                 }
             >
-                <Form>
-                    <Row className="auth-row">
+                <Form className="auth-form">
+                    <Row className="form-row">
                         <label htmlFor="firstName">First Name</label>
                         <Field id="firstName" name="firstName" />
                     </Row>
 
-                    <Row className="auth-row">
+                    <Row className="form-row">
                         <label htmlFor="lastName">Last Name</label>
                         <Field id="lastName" name="lastName" />
                     </Row>
 
-                    <Row className="auth-row">
+                    <Row className="form-row">
                         <label htmlFor="email">Email</label>
                         <Field id="email" name="Email" />
                     </Row>
 
-                    <Row className="auth-row">
+                    <Row className="form-row">
                         <label htmlFor="password">Password</label>
                         <Field id="password" name="password" type="password"/>
                     </Row>
 
-                    <Row className="auth-row">
+                    <Row className="form-row">
                         <label htmlFor="passwordRepeat">Password Repeat</label>
                         <Field id="passwordRepeat" name="passwordRepeat" type="password"/>
                     </Row>
-                    <Row className="auth-row">
+                    <Row className="form-row">
                         <Button color="link" onClick={this.handleChangeToLogin}>Login</Button>
                     </Row>
-                    <Row className="auth-row">
+                    <Row className="form-row">
                         <CustomSubmitButton
                             isSubmitting={this.state.isSubmitting}
                             text="Submit"

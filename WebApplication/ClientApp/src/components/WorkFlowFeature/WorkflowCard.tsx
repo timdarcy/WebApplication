@@ -3,8 +3,9 @@ import * as WorkflowBoardStore from '../../store/WorkflowBoard';
 import styled from 'styled-components'
 import {Draggable, DraggableStateSnapshot, DraggableProvided} from 'react-beautiful-dnd'
 import { connect, MapStateToProps, DispatchProp } from 'react-redux';
-import CardModal from './CardModal';
+import CardModal, { CardValues } from './CardModal';
 import { Badge } from 'reactstrap';
+import { MdDeleteForever } from 'react-icons/md';
 
 const Container = styled.div`
     border: 1px solid lightgrey;
@@ -17,17 +18,21 @@ const Container = styled.div`
 const EditButton = styled.span`
     cursor: pointer;
 `
+const DeleteButton = styled.span`
+    cursor: pointer;
+    float:right;
+`
 
 type Props = {
     card: WorkflowBoardStore.Card,
     index: string,
+    laneId: string,
     actions: typeof WorkflowBoardStore.actionCreators
 }
 
 interface State {
     showEditModal: boolean
 }
-
 
 class WorkflowCard extends React.Component<Props, State>{
     constructor(props: Props){
@@ -37,10 +42,11 @@ class WorkflowCard extends React.Component<Props, State>{
         }
     }
 
-    handleDescriptionChange = (event: any) => {
-       var newCard = {
+    handleUpdateCardValues = (values: CardValues) => {
+        var newCard = {
             ...this.props.card,
-            content: event.target.value
+            title: values.title,
+            content: values.content
         }
         this.props.actions.updateCard(newCard)
     }
@@ -53,6 +59,9 @@ class WorkflowCard extends React.Component<Props, State>{
         this.setState({
             showEditModal: false
         });
+    }
+    handleCardDelete = () => {
+        this.props.actions.deleteCard(this.props.card.id, this.props.laneId)
     }
 
     render(){
@@ -69,9 +78,10 @@ class WorkflowCard extends React.Component<Props, State>{
                             {...provided.dragHandleProps}
                             isDragging={snapshot.isDragging}
                         >
+                            <DeleteButton onClick={this.handleCardDelete}><Badge color="danger" >Delete</Badge></DeleteButton>
                             <h3>{this.props.card.title}</h3>
-                            <input onChange={this.handleDescriptionChange} value={this.props.card.content} />
-                            <EditButton onClick={this.handleModalOpen}><Badge color="info">edit</Badge></EditButton>
+                            <p>{this.props.card.content}</p>
+                            <EditButton onClick={this.handleModalOpen}><Badge color="info">Edit</Badge></EditButton>
                         </Container>
                     )}
                 
@@ -79,7 +89,10 @@ class WorkflowCard extends React.Component<Props, State>{
                 <CardModal
                     isOpen={this.state.showEditModal}
                     handleClose={this.handleModalClose}
-                    cardValues={{ title: this.props.card.title, content: this.props.card.content }} />
+                    cardValues={{ title: this.props.card.title, content: this.props.card.content }}
+                    updateCardValues={this.handleUpdateCardValues}
+                    label={{ submit: 'Update Card', cancel: 'Cancel'}}
+                />
              </>
 
         )

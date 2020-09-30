@@ -9,17 +9,12 @@ import { Formik, Field, Form } from 'formik';
 interface Props {
     isOpen: boolean,
     handleClose: any,
-    cardValues: CardValues,
-    updateCardValues: any,
-    labels: {
-        submit: string,
-        cancel: string
-    }
+    laneValues: LaneValues,
+    updateLaneValues: any,
 }
 
-export interface CardValues {
-    title: string,
-    content: string
+export interface LaneValues {
+    title: string
 }
 
 interface State {
@@ -27,7 +22,7 @@ interface State {
 }
 
 
-class CardModal extends React.Component<Props, State>{
+class LaneModal extends React.Component<Props, State>{
     constructor(props: Props){
         super(props)
         this.state = {
@@ -40,12 +35,12 @@ class CardModal extends React.Component<Props, State>{
     render(){
         return (
             <Modal isOpen={this.props.isOpen} toggle={this.props.handleClose} >
-                <ModalHeader toggle={this.props.handleClose}>Edit Card</ModalHeader>
+                <ModalHeader toggle={this.props.handleClose}>Edit Lane</ModalHeader>
                 
                     <Formik
-                        initialValues={this.props.cardValues}
-                        onSubmit={(values: CardValues) => {
-                            this.props.updateCardValues(values);
+                        initialValues={this.props.laneValues}
+                        onSubmit={(values: LaneValues) => {
+                            this.props.updateLaneValues(values);
                             this.props.handleClose();
                             }
                         }
@@ -55,10 +50,6 @@ class CardModal extends React.Component<Props, State>{
                             <Row className="form-row">
                                 <label htmlFor="title">Title</label>
                                 <Field id='title' type='text' name='title'/>
-                            </Row>
-                            <Row className="form-row"> 
-                                <label htmlFor="content">Content</label>
-                                <Field id='content' as='textarea' name='content' />
                             </Row>
 
                         </ModalBody>
@@ -76,4 +67,4 @@ class CardModal extends React.Component<Props, State>{
 }
 
 
-export default CardModal;
+export default LaneModal;

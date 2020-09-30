@@ -5,6 +5,9 @@ import * as WorkflowBoardStore from '../../store/WorkflowBoard';
 import WorkflowCard from './WorkflowCard';
 import styled from 'styled-components';
 import { Droppable, DroppableProvided, DroppableStateSnapshot, Draggable, DraggableProvided } from 'react-beautiful-dnd';
+import CardModal, { CardValues } from './CardModal';
+import { Badge } from 'reactstrap';
+import LaneModal, { LaneValues } from './LaneModal';
 
 
 const Container = styled.div`
@@ -26,9 +29,12 @@ const CardList = styled.div`
     flex-grow: 1;
     min-height:100px;
 `;
-const AddCard = styled.div`
+const AddCard = styled.span`
     padding: 8px;
-    flex-grow: 1;
+    cursor: pointer
+`
+const EditLane = styled.span`
+    padding: 8px;
     cursor: pointer
 `
 
@@ -39,10 +45,19 @@ interface Props {
     actions: typeof WorkflowBoardStore.actionCreators
 }
 
+interface State {
+    showCardModal: boolean,
+    showLaneModal: boolean
+}
 
-class WorkflowLane extends React.Component<Props>{
+
+class WorkflowLane extends React.Component<Props, State>{
     constructor(props: any) {
         super(props)
+        this.state = {
+            showCardModal: false,
+            showLaneModal: false
+        }
     }
 
     handleCardPropsUpdate = (newProps: any) => {
@@ -58,47 +73,94 @@ class WorkflowLane extends React.Component<Props>{
     }
 
     handleAddCard = () => {
-        this.props.actions.addNewCard(this.props.lane.id);
+        this.setState({
+            showCardModal: true
+        });
     }
+
+    handleCardModalClose = () => {
+        this.setState({
+            showCardModal: false
+        });
+    }
+    handleUpdateCardValues = (values: CardValues) => {
+        this.props.actions.addNewCard(this.props.lane.id, values);
+    }
+    handleEditLane = () => {
+        this.setState({
+            showLaneModal: true
+        });
+    }
+    handleLaneModalClose = () => {
+        this.setState({
+            showLaneModal: false
+        });
+
+    }
+    handleUpdateLaneValues = (values: LaneValues) => {
+        var newLane = {
+            ...this.props.lane,
+            title: values.title
+        }
+        this.props.actions.updateLane(newLane)
+    }
+
 
     render() {
         return (
-            <Draggable
-                draggableId={this.props.lane.id}
-                index={this.props.index}
-            >
-                {(provided: DraggableProvided) => (
-                    <Container
-                        {...provided.draggableProps}
-                        ref={provided.innerRef}
-                    >
-                        <Title
-                            {...provided.dragHandleProps}
-                        ><input onChange={this.handleTitleChange} value={this.props.lane.title} /></Title>
-                        <Droppable
-                            droppableId={this.props.lane.id}
-                            type="card"
+            <>
+                <Draggable
+                    draggableId={this.props.lane.id}
+                    index={this.props.index}
+                >
+                    {(provided: DraggableProvided) => (
+                        <Container
+                            {...provided.draggableProps}
+                            ref={provided.innerRef}
                         >
-                            {(provided: DroppableProvided, snapshot: DroppableStateSnapshot) => (
-                                <>
-                                    <CardList
-                                        ref={provided.innerRef}
-                                        {...provided.droppableProps}
-                                        isDraggingOver={snapshot.isDraggingOver}
-                                    >
+                            <Title
+                                {...provided.dragHandleProps}
+                            >{this.props.lane.title}</Title>
+                            <Droppable
+                                droppableId={this.props.lane.id}
+                                type="card"
+                            >
+                                {(provided: DroppableProvided, snapshot: DroppableStateSnapshot) => (
+                                    <>
+                                        <CardList
+                                            ref={provided.innerRef}
+                                            {...provided.droppableProps}
+                                            isDraggingOver={snapshot.isDraggingOver}
+                                        >
 
-                                        {this.props.cards.map((card: any, index: any) => <WorkflowCard key={card.id} card={card} index={index} />)}
-                                        {provided.placeholder}
-                                    </CardList>
-                                    <AddCard onClick={this.handleAddCard}>Add Card</AddCard>
-                                </>
-                            )}
+                                            {this.props.cards.map((card: any, index: any) => <WorkflowCard key={card.id} card={card} index={index} laneId={this.props.lane.id}/>)}
+                                            {provided.placeholder}
+                                        </CardList>
+                                        <AddCard onClick={this.handleAddCard}><Badge color="primary">Add Card</Badge></AddCard>
+                                        <EditLane onClick={this.handleEditLane}><Badge color="info">Edit Lane</Badge></EditLane>
+                                    </>
+                                )}
 
-                        </Droppable>
-                    </Container>
-                    )
-                }
-            </Draggable>
+                            </Droppable>
+                        </Container>
+                        )
+                    }
+                </Draggable>
+                <CardModal
+                    isOpen={this.state.showCardModal}
+                    handleClose={this.handleCardModalClose}
+                    cardValues={{ title: '', content: '' }}
+                    updateCardValues={this.handleUpdateCardValues}
+                    labels={{ submit: 'Create Card', cancel: 'Cancel'}}
+                />
+                <LaneModal
+                    isOpen={this.state.showLaneModal}
+                    handleClose={this.handleLaneModalClose}
+                    laneValues={{ title: this.props.lane.title}}
+                    updateLaneValues={this.handleUpdateLaneValues}
+                />
+
+            </>
         )
     }
 }

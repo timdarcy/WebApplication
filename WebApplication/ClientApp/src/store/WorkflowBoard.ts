@@ -1,5 +1,6 @@
 import { Action, Reducer } from 'redux';
 import { v4 as uuidv4 } from 'uuid';
+import { CardValues } from '../components/WorkFlowFeature/CardModal';
 
 // -----------------
 // STATE - This defines the type of data maintained in the Redux store.
@@ -34,6 +35,13 @@ export interface UpdateCardAction {
 export interface AddNewCardAction {
     type: 'ADD_NEW_CARD';
     laneId: string;
+    values: CardValues;
+}
+
+export interface DeleteCardAction {
+    type: 'DELETE_CARD';
+    cardId: string;
+    laneId: string;
 }
 
 export interface UpdateLaneAction {
@@ -48,7 +56,7 @@ export interface UpdateStateAction {
 
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
-export type KnownAction = UpdateCardAction | UpdateLaneAction | UpdateStateAction | AddNewCardAction;
+export type KnownAction = UpdateCardAction | UpdateLaneAction | UpdateStateAction | AddNewCardAction | DeleteCardAction;
 
 // ----------------
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
@@ -58,18 +66,18 @@ export const actionCreators = {
     updateCard: (updatedCard: Card) => ({ type: 'UPDATE_CARD', updatedCard: updatedCard } as UpdateCardAction),
     updateLane: (updatedLane: Lane) => ({ type: 'UPDATE_LANE', updatedLane: updatedLane} as UpdateLaneAction),
     updateState: (newState: WorkflowBoardState) => ({ type: 'UPDATE_STATE', newState: newState } as UpdateStateAction),
-
-    addNewCard: (laneId: string) => ({ type: 'ADD_NEW_CARD', laneId: laneId } as AddNewCardAction)
+    deleteCard: (cardId: string, laneId: string) => ({ type: 'DELETE_CARD', cardId: cardId, laneId: laneId} as DeleteCardAction),
+    addNewCard: (laneId: string, values: CardValues) => ({ type: 'ADD_NEW_CARD', laneId: laneId, values: values } as AddNewCardAction)
 };
 
 // ----------------
 // REDUCER - For a given state and action, returns the new state. To support time travel, this must not mutate the old state.
 
-const createNewCard = () => {
+const createNewCard = (values: CardValues) => {
     return <Card>{
         id: uuidv4(),
-        title: 'add a title',
-        content: 'add some content'
+        title: values.title,
+        content: values.content
     }
 }
 
@@ -116,14 +124,19 @@ export const reducer: Reducer<WorkflowBoardState> = (state: WorkflowBoardState |
         case 'UPDATE_STATE':
             return action.newState
         case 'ADD_NEW_CARD':
-            var newCard = createNewCard();
+            var newCard = createNewCard(action.values);
             var newState = {
                 ...state
             }
             newState.cards[newCard.id] = newCard;
             newState.lanes[action.laneId].cardIds.push(newCard.id)
             return newState;
-
+        case 'DELETE_CARD':
+            var newState = { ...state }
+            delete newState.cards[action.cardId];
+            var index = newState.lanes[action.laneId].cardIds.indexOf(action.cardId);
+            newState.lanes[action.laneId].cardIds.splice(index, 1);
+            return newState;
         default:
             return state;
     }
