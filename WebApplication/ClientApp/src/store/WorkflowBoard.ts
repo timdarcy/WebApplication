@@ -1,6 +1,7 @@
 import { Action, Reducer } from 'redux';
 import { v4 as uuidv4 } from 'uuid';
 import { CardValues } from '../components/WorkFlowFeature/CardModal';
+import { LaneValues } from '../components/WorkFlowFeature/LaneModal';
 
 // -----------------
 // STATE - This defines the type of data maintained in the Redux store.
@@ -13,7 +14,7 @@ export interface WorkflowBoardState {
 export interface Lane {
     id: string,
     title: string,
-    cards: Array<string>
+    cardIds: Array<string>
 }
 export interface Card {
     id: string,
@@ -49,6 +50,16 @@ export interface UpdateLaneAction {
     updatedLane: Lane;
 }
 
+export interface AddNewLaneAction {
+    type: 'ADD_NEW_LANE';
+    values: LaneValues;
+}
+
+export interface DeleteLane {
+    type: 'DELETE_LANE';
+    laneId: string;
+}
+
 export interface UpdateStateAction {
     type: 'UPDATE_STATE';
     newState: WorkflowBoardState;
@@ -56,7 +67,7 @@ export interface UpdateStateAction {
 
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
-export type KnownAction = UpdateCardAction | UpdateLaneAction | UpdateStateAction | AddNewCardAction | DeleteCardAction;
+export type KnownAction = UpdateCardAction | UpdateLaneAction | UpdateStateAction | AddNewCardAction | DeleteCardAction | AddNewLaneAction | DeleteLane;
 
 // ----------------
 // ACTION CREATORS - These are functions exposed to UI components that will trigger a state transition.
@@ -67,7 +78,9 @@ export const actionCreators = {
     updateLane: (updatedLane: Lane) => ({ type: 'UPDATE_LANE', updatedLane: updatedLane} as UpdateLaneAction),
     updateState: (newState: WorkflowBoardState) => ({ type: 'UPDATE_STATE', newState: newState } as UpdateStateAction),
     deleteCard: (cardId: string, laneId: string) => ({ type: 'DELETE_CARD', cardId: cardId, laneId: laneId} as DeleteCardAction),
-    addNewCard: (laneId: string, values: CardValues) => ({ type: 'ADD_NEW_CARD', laneId: laneId, values: values } as AddNewCardAction)
+    addNewCard: (laneId: string, values: CardValues) => ({ type: 'ADD_NEW_CARD', laneId: laneId, values: values } as AddNewCardAction),
+    addNewLane: (values: LaneValues) => ({ type: 'ADD_NEW_LANE', values: values } as AddNewLaneAction),
+    deleteLane: (laneId: string) => ({ type: 'DELETE_LANE', laneId: laneId} as DeleteLane)
 };
 
 // ----------------
@@ -78,6 +91,14 @@ const createNewCard = (values: CardValues) => {
         id: uuidv4(),
         title: values.title,
         content: values.content
+    }
+}
+
+const createNewLane = (values: LaneValues) => {
+    return <Lane>{
+        id: uuidv4(),
+        title: values.title,
+        cardIds: []
     }
 }
 
@@ -137,6 +158,18 @@ export const reducer: Reducer<WorkflowBoardState> = (state: WorkflowBoardState |
             var index = newState.lanes[action.laneId].cardIds.indexOf(action.cardId);
             newState.lanes[action.laneId].cardIds.splice(index, 1);
             return newState;
+        case 'ADD_NEW_LANE':
+            var newState = { ...state }
+            var newLane = createNewLane(action.values)
+            newState.lanes[newLane.id] = newLane;
+            newState.laneOrder.push(newLane.id);
+            return newState;
+        case 'DELETE_LANE':
+            var newState = { ...state }
+            delete newState.lanes[action.laneId]
+            var laneIndex = newState.laneOrder.indexOf(action.laneId);
+            newState.laneOrder.splice(laneIndex, 1);
+            return newState
         default:
             return state;
     }

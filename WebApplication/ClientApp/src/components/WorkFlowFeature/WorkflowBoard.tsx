@@ -5,19 +5,34 @@ import * as WorkflowBoardStore from '../../store/WorkflowBoard'
 import WorkflowLane from './WorkflowLane';
 import { DragDropContext, DropResult, Droppable, DroppableProvided } from 'react-beautiful-dnd';
 import styled from 'styled-components';
+import { Badge } from 'reactstrap';
+import LaneModal, { LaneValues } from './LaneModal';
 
 const Container = styled.div`
     display: flex;
 `
+const AddLane = styled.span`
+    padding: 8px;
+    cursor: pointer;
+`
+
 
 type Props = 
     WorkflowBoardStore.WorkflowBoardState &
     typeof WorkflowBoardStore.actionCreators
 
+interface State {
+    showNewLaneModal: boolean
+}
 
 
-class WorkflowBoard extends React.Component<Props>{
-    
+class WorkflowBoard extends React.Component<Props,State>{
+    constructor(props: Props) {
+        super(props);
+        this.state = {
+            showNewLaneModal: false
+        }
+    }
     onDragEnd = (result: DropResult) => {
         const { destination, source, draggableId, type } = result;
         if (!destination) {
@@ -93,35 +108,57 @@ class WorkflowBoard extends React.Component<Props>{
         };
         
     }
+    handleAddLane = () => {
+        this.setState({
+            showNewLaneModal: true
+        });
+    }
+    handleNewLaneModalClose = () => {
+        this.setState({
+            showNewLaneModal: false
+        });
+    }
+    addNewLane = (values: LaneValues) => {
+        this.props.addNewLane(values);
+    }
 
     render() {
         const test = this.props;
         return (
-            <DragDropContext
-                onDragEnd={this.onDragEnd}
-            >
-                <Droppable
-                    droppableId="all-lanes"
-                    direction="horizontal"
-                    type="lane"
+            <>
+                <DragDropContext
+                    onDragEnd={this.onDragEnd}
                 >
-                    {(provided: DroppableProvided) => (
-                        <Container
-                            {...provided.droppableProps}
-                            ref={provided.innerRef}
-                        >
-                            {this.props.laneOrder.map((laneId: string, index: any) => {
-                                const lane = this.props.lanes[laneId];
-                                const cards = lane.cardIds.map((cardId: string) => this.props.cards[cardId])
+                    <Droppable
+                        droppableId="all-lanes"
+                        direction="horizontal"
+                        type="lane"
+                    >
+                        {(provided: DroppableProvided) => (
+                            <Container
+                                {...provided.droppableProps}
+                                ref={provided.innerRef}
+                            >
+                                {this.props.laneOrder.map((laneId: string, index: any) => {
+                                    const lane = this.props.lanes[laneId];
+                                    const cards = lane.cardIds.map((cardId: string) => this.props.cards[cardId])
 
-                                return <WorkflowLane key={laneId} lane={lane} cards={cards} index={index}/>
-                            })}
-                            {provided.placeholder}
-                        </Container>
-                    )}
-                    
-                </Droppable>
-            </DragDropContext>
+                                    return <WorkflowLane key={laneId} lane={lane} cards={cards} index={index}/>
+                                })}
+                                {provided.placeholder}
+                                <AddLane onClick={this.handleAddLane}><Badge color="primary">Add Lane</Badge></AddLane>
+                            </Container>
+                            )}
+                         
+                    </Droppable>
+                </DragDropContext>
+                <LaneModal
+                    isOpen={this.state.showNewLaneModal}
+                    handleClose={this.handleNewLaneModalClose}
+                    laneValues={{ title: '' }}
+                    updateLaneValues={this.addNewLane}
+                />
+            </>
         )
     }
 }

@@ -37,6 +37,11 @@ const EditLane = styled.span`
     padding: 8px;
     cursor: pointer
 `
+const DeleteButton = styled.span`
+    padding: 8px;
+    cursor: pointer;
+    float: right;
+`
 
 interface Props {
     lane: WorkflowBoardStore.Lane,
@@ -52,7 +57,7 @@ interface State {
 
 
 class WorkflowLane extends React.Component<Props, State>{
-    constructor(props: any) {
+    constructor(props: Props) {
         super(props)
         this.state = {
             showCardModal: false,
@@ -105,6 +110,9 @@ class WorkflowLane extends React.Component<Props, State>{
         this.props.actions.updateLane(newLane)
     }
 
+    handleDeleteLane = () => {
+        this.props.actions.deleteLane(this.props.lane.id)
+    }
 
     render() {
         return (
@@ -118,9 +126,11 @@ class WorkflowLane extends React.Component<Props, State>{
                             {...provided.draggableProps}
                             ref={provided.innerRef}
                         >
+                            <DeleteButton onClick={this.handleDeleteLane}><Badge color="danger">Delete</Badge></DeleteButton>
                             <Title
                                 {...provided.dragHandleProps}
                             >{this.props.lane.title}</Title>
+                            
                             <Droppable
                                 droppableId={this.props.lane.id}
                                 type="card"
