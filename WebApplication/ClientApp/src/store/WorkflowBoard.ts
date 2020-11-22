@@ -2,6 +2,26 @@ import { Action, Reducer } from 'redux';
 import { v4 as uuidv4 } from 'uuid';
 import { CardValues } from '../components/WorkFlowFeature/CardModal';
 import { LaneValues } from '../components/WorkFlowFeature/LaneModal';
+import { useStore } from 'react-redux';
+import { ApplicationState } from '.';
+import configuredStore from './store';
+
+
+const axios = require('axios').default;
+
+export const saveToServer = (state: WorkflowBoardState) => {
+    var store = configuredStore.store;
+    var appState: ApplicationState = store.getState();
+    var stringState = JSON.stringify(state);
+
+    axios.post('/api/user/updateState', { state: stringState }, {
+        headers: {
+            'bearer': "sdfsfdsffs"
+        }
+    }).then((response: any) => {
+        console.log(response)
+    });
+}
 
 // -----------------
 // STATE - This defines the type of data maintained in the Redux store.
@@ -102,6 +122,7 @@ const createNewLane = (values: LaneValues) => {
     }
 }
 
+
 export const reducer: Reducer<WorkflowBoardState> = (state: WorkflowBoardState | undefined, incomingAction: Action): WorkflowBoardState => {
     if (state === undefined) {
         return {
@@ -151,6 +172,7 @@ export const reducer: Reducer<WorkflowBoardState> = (state: WorkflowBoardState |
             }
             newState.cards[newCard.id] = newCard;
             newState.lanes[action.laneId].cardIds.push(newCard.id)
+            saveToServer(newState);
             return newState;
         case 'DELETE_CARD':
             var newState = { ...state }

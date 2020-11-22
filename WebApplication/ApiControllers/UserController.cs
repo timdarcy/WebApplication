@@ -87,5 +87,23 @@ namespace WebApplication.ApiControllers
         {
             return Ok();
         }
+
+        [HttpPost("updateState")]
+        public IActionResult UpdateState([FromBody] dynamic state)
+        {
+            return Ok(new
+            {
+                State = state
+            });
+        }
+
+        [HttpGet("getState")]
+        public IActionResult getState()
+        {
+            return Ok(new
+            {
+                State = "this is some state"
+            });
+        }
     }
 }

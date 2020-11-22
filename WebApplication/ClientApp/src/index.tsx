@@ -10,13 +10,14 @@ import configureStore from './store/configureStore';
 import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 import { PersistGate } from 'redux-persist/integration/react'
+import configuredStore from './store/store';
 
 // Create browser history to use in the Redux store
 const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href') as string;
 const history = createBrowserHistory({ basename: baseUrl });
 
 // Get the application-wide store instance, prepopulating with state from the server where available.
-const config = configureStore(history);
+const config = configuredStore;
 
 ReactDOM.render(
     <Provider store={config.store}>
